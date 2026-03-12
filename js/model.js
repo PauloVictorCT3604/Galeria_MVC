@@ -35,7 +35,7 @@ const Model = {
   currentCategory: "todas",
   currentSearch: "",
   currentPage: 1,
-  itemsPerPage: 5,
+  itemsPerPage: 8,
 
   // Retorna imagens filtradas por categoria e busca
   getFiltered() {
