@@ -33,13 +33,23 @@ const Model = {
   ],
 
   currentCategory: "todas",
+  currentSearch: "",
   currentPage: 1,
   itemsPerPage: 5,
 
-  // Retorna todas as imagens ou só as da categoria selecionada
+  // Retorna imagens filtradas por categoria e busca
   getFiltered() {
-    if (this.currentCategory === "todas") return this.images;
-    return this.images.filter(img => img.category === this.currentCategory);
+    return this.images.filter(img => {
+      const matchCategory = this.currentCategory === "todas" || img.category === this.currentCategory;
+
+      // Busca por título ou nas tags
+      const query = this.currentSearch.toLowerCase();
+      const matchSearch = query === ""
+        || img.title.toLowerCase().includes(query)
+        || img.tags.some(tag => tag.includes(query));
+
+      return matchCategory && matchSearch;
+    });
   },
 
   // Retorna a fatia da página atual
@@ -62,6 +72,11 @@ const Model = {
   // Atualiza categoria e reseta para página 1
   setCategory(category) {
     this.currentCategory = category;
+    this.currentPage = 1;
+  },
+
+  setSearch(term) {
+    this.currentSearch = term;
     this.currentPage = 1;
   },
 

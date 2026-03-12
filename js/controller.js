@@ -4,6 +4,7 @@ const Controller = {
 
   init() {
     View.onFilter     = (category) => this.handleFilter(category);
+    View.onSearch     = (term)     => this.handleSearch(term);
     View.onPageChange = (page)     => this.handlePageChange(page);
 
     View.bindEvents();
@@ -12,6 +13,11 @@ const Controller = {
 
   handleFilter(category) {
     Model.setCategory(category);
+    this.refresh();
+  },
+
+  handleSearch(term) {
+    Model.setSearch(term);
     this.refresh();
   },
 

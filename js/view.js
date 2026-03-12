@@ -6,19 +6,30 @@ const View = {
   elements: {
     gallery:         document.getElementById("gallery"),
     filters:         document.getElementById("filters"),
+    searchInput:     document.getElementById("search-input"),
     pagination:      document.getElementById("pagination"),
     resultsCount:    document.getElementById("results-count"),
     currentCatLabel: document.getElementById("current-category"),
   },
 
   onFilter:     null,
+  onSearch:     null,
   onPageChange: null,
 
   bindEvents() {
-    // Delegação de evento — um único listener para todos os botões de filtro
+    // Delegação de evento nos botões de filtro
     this.elements.filters.addEventListener("click", e => {
       const btn = e.target.closest(".filter-btn");
       if (btn && this.onFilter) this.onFilter(btn.dataset.category);
+    });
+
+    // Busca com debounce para não disparar a cada tecla
+    let debounceTimer;
+    this.elements.searchInput.addEventListener("input", e => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (this.onSearch) this.onSearch(e.target.value);
+      }, 300);
     });
 
     // Delegação de evento na paginação
@@ -64,9 +75,11 @@ const View = {
         </div>
       `;
     } else {
+      // aspect-ratio alternado para dar altura variada no masonry
+      const ratios = ["3/2", "3/4", "1/1", "4/3", "2/3"];
       gallery.innerHTML = images.map((img, i) => `
         <article class="card" style="animation-delay: ${i * 60}ms">
-          <div class="card-img-wrap">
+          <div class="card-img-wrap" style="aspect-ratio: ${ratios[i % ratios.length]}">
             <img src="${img.url}" alt="${img.title}" loading="lazy" />
             <div class="card-overlay">
               <span class="card-category">${img.category}</span>

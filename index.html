@@ -72,6 +72,32 @@
       border-radius: 2px;
     }
 
+    /* ─── Barra de Busca ─── */
+    .search-wrap {
+      padding: 1.2rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #search-input {
+      width: 100%;
+      max-width: 400px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: .85rem;
+      padding: .6rem 1rem;
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    #search-input:focus {
+      border-color: var(--neon);
+    }
+
+    #search-input::placeholder { color: var(--muted); }
+
     /* ─── Filtros ─── */
     #filters {
       display: flex;
@@ -120,13 +146,19 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* ─── Galeria ─── */
+    /* ─── Galeria — Masonry responsivo ─── */
     #gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      columns: 4 220px;   /* max 4 colunas, mínimo 220px cada */
       gap: 1px;
-      background: var(--border);
       padding: 1px;
+      background: var(--border);
+    }
+
+    /* cada card quebra a coluna individualmente */
+    .card {
+      break-inside: avoid;
+      margin-bottom: 1px;
+      display: block;
     }
 
     #gallery.fade-out {
@@ -307,6 +339,11 @@
     </div>
     <span id="current-category">✦ TODAS</span>
   </header>
+
+  <!-- ── BUSCA ── -->
+  <div class="search-wrap">
+    <input type="text" id="search-input" placeholder="Buscar por título ou tag..." />
+  </div>
 
   <!-- ── BOTÕES DE CATEGORIA ── -->
   <nav id="filters" aria-label="Filtrar por categoria"></nav>
