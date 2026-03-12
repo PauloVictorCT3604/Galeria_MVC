@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galeria MVC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0d0d0d;
+      --surface:      #161616;
+      --border:       #2a2a2a;
+      --accent:       #e8ff47;
+      --accent2:      #ff6b35;
+      --text:         #f0f0f0;
+      --muted:        #666;
+      --radius:       6px;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* ─── Header ─── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 2.5rem 1.5rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .header-left h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1;
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+
+    .header-left p {
+      font-size: .8rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-top: .3rem;
+    }
+
+    #current-category {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 3vw, 1.8rem);
+      color: var(--accent2);
+      letter-spacing: 1px;
+      margin-left: auto;
+      align-self: center;
+    }
+
+    /* ─── Botões de Categoria ─── */
+    #filters {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      padding: 1.4rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: .08em;
+      padding: .55rem 1.4rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all .18s;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Botão ativo fica preenchido com a cor accent */
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    /* ─── Contagem ─── */
+    .gallery-meta {
+      padding: .8rem 2.5rem;
+      font-size: .78rem;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    /* ─── Galeria ─── */
+    #gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1px;
+      padding: 1px;
+      background: var(--border);
+    }
+
+    #gallery.fade-out {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .22s, transform .22s;
+    }
+
+    #gallery.fade-in {
+      animation: fadeInUp .3s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Card ─── */
+    .card {
+      background: var(--surface);
+      overflow: hidden;
+      animation: cardReveal .4s ease both;
+    }
+
+    @keyframes cardReveal {
+      from { opacity: 0; transform: scale(.97); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .card-img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/2;
+    }
+
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s ease;
+    }
+
+    .card:hover .card-img-wrap img {
+      transform: scale(1.05);
+    }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 50%);
+      display: flex;
+      align-items: flex-end;
+      padding: .7rem;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .card:hover .card-overlay { opacity: 1; }
+
+    .card-category {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .card-info {
+      padding: .9rem 1rem;
+    }
+
+    .card-info h3 {
+      font-size: .92rem;
+      font-weight: 500;
+      margin-bottom: .5rem;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: .35rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: .68rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: .1rem .4rem;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 5rem 2rem;
+      color: var(--muted);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    /* ─── Paginação ─── */
+    #pagination {
+      display: flex;
+      justify-content: center;
+      gap: .4rem;
+      padding: 2rem;
+    }
+
+    .page-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--font-body);
+      font-size: .85rem;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .page-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+      font-weight: 700;
+    }
+
+    .page-btn:disabled {
+      opacity: .25;
+      cursor: not-allowed;
+    }
+
+    .nav-btn { font-size: 1rem; }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.2rem 2.5rem;
+      font-size: .72rem;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="header-left">
+      <h1>GALERIA GG</h1>
+      <p>Padrão MVC · JavaScript Puro</p>
+    </div>
+    <!-- Label da categoria ativa — atualizado pela View -->
+    <span id="current-category">✦ TODAS</span>
+  </header>
+
+  <!-- ── BOTÕES DE CATEGORIA ── -->
+  <!-- Gerados dinamicamente pela View.renderFilters() -->
+  <nav id="filters" aria-label="Filtrar por categoria"></nav>
+
+  <!-- Contagem de resultados -->
+  <div class="gallery-meta">
+    <span id="results-count">0 imagens encontradas</span>
+  </div>
+
+  <!-- ── GALERIA ── -->
+  <!-- Cards inseridos pela View.renderGallery() -->
+  <main id="gallery"></main>
+
+  <!-- ── PAGINAÇÃO ── -->
+  <!-- Botões gerados pela View.renderPagination() -->
+  <div id="pagination"></div>
+
+  <footer>Disciplina: Programação Web II &nbsp;·&nbsp; Padrão MVC</footer>
+
+  <!-- Ordem importa: Model → View → Controller → App -->
+  <script src="js/model.js"></script>
+  <script src="js/view.js"></script>
+  <script src="js/controller.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
